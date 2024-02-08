@@ -12,10 +12,11 @@ const createStudent = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
+    // console.log(err._message);
     res.status(400).json({
       success: false,
       status: 400,
-      message: 'Something went wrong',
+      message: err,
     });
   }
 };
@@ -27,6 +28,7 @@ const getStudentList = async (req: Request, res: Response) => {
       success: true,
       status: 200,
       message: 'Student list is fetched successfully',
+      count: result.length,
       data: result,
     });
   } catch (err) {
