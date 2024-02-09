@@ -6,7 +6,7 @@ const UserNameValidationSchema = z.object({
   firstName: z
     .string()
     .min(1)
-    .max(20)
+    .max(20, { message: 'First Name must be less than 20 character' })
     .regex(/^[A-Za-z]+$/, { message: 'First Name must only contain letters' })
     .refine(
       (value) => {
@@ -22,6 +22,7 @@ const UserNameValidationSchema = z.object({
   lastName: z
     .string()
     .min(1)
+    .max(20, { message: 'Last Name must be less than 20 character' })
     .refine((value) => validator.isAlpha(value), {
       message: 'Last Name must only contain letters',
     }),

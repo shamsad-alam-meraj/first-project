@@ -15,6 +15,7 @@ const createStudent = async (req: Request, res: Response) => {
 
     // send the validated data
     const result = await StudentServices.createStudentIntoDB(zodParsedData);
+
     //Joi's error message
     // if (error) {
     //   res.status(400).json({
@@ -30,14 +31,13 @@ const createStudent = async (req: Request, res: Response) => {
       message: 'Student is created successfully',
       data: result,
     });
-  } catch (err) {
-    console.log(err);
-    let issue = err.issues;
+  } catch (err: any) {
+    let { issues } = err;
     res.status(400).json({
       success: false,
       status: 400,
-      message: 'Something wents wrong',
-      error: issue ? issue[0]?.message : err,
+      message: err.message ?? 'Something wents wrong',
+      error: issues ? issues[0]?.message : err,
     });
   }
 };
