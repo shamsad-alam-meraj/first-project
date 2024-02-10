@@ -31,13 +31,13 @@ const createStudent = async (req: Request, res: Response) => {
       message: 'Student is created successfully',
       data: result,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    let { issues } = err;
     res.status(400).json({
       success: false,
       status: 400,
       message: err.message ?? 'Something wents wrong',
-      error: issues ? issues[0]?.message : err,
+      error: err.issues,
     });
   }
 };
@@ -88,9 +88,36 @@ const getSpecificStudentDetails = async (req: Request, res: Response) => {
     });
   }
 };
+const deleteSpecificStudentDetails = async (req: Request, res: Response) => {
+  try {
+    const studentId = req.params.id;
+    const result = await StudentServices.deleteStudentDetailsFromDB(studentId);
+    if (result) {
+      res.status(200).json({
+        success: true,
+        status: 200,
+        message: 'Student details is deleted successfully',
+        data: result,
+      });
+    } else {
+      res.status(200).json({
+        success: false,
+        status: 404,
+        message: 'Student details not found',
+      });
+    }
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      status: 400,
+      message: 'Something went wrong',
+    });
+  }
+};
 
 export const StudentControllers = {
   createStudent,
   getStudentList,
   getSpecificStudentDetails,
+  deleteSpecificStudentDetails
 };

@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcrypt';
 import {
   TGuardian,
   TLocalGuardian,
@@ -8,6 +9,7 @@ import {
   TStudentModel,
   TUserName,
 } from './student.interface';
+import config from '../../config';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -79,6 +81,7 @@ const studentSchema = new Schema<TStudent, TStudentModel, StudentMethods>({
     required: [true, 'Student id is required & must be unique'],
     unique: true,
   },
+  password: { type: String, required: [true, 'Student password is required'] },
   name: { type: userNameSchema, required: true },
   dateOfBirth: { type: String, required: [true, 'Date of birth is required'] },
   gender: {
@@ -124,6 +127,34 @@ const studentSchema = new Schema<TStudent, TStudentModel, StudentMethods>({
   localGuardian: { type: localGuadianSchema, required: true },
   profileImage: { type: String },
   isActive: { type: String, enum: ['active', 'disabled'], default: 'active' },
+  isDeleted: { type: Boolean, default: false },
+});
+
+// pre middle ware
+studentSchema.pre('save', async function (next) {
+  // console.log(this, 'pre middle ware');
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_round),
+  );
+  next();
+});
+
+// post middleware
+studentSchema.post('save', function (data, next) {
+  // console.log(this, 'post middleware');
+  data.password = '';
+  next();
+});
+
+// query middleware
+studentSchema.pre('find', function (next) {
+
+
+
+  next();
 });
 
 studentSchema.methods.isUserExist = async function (id: string) {
