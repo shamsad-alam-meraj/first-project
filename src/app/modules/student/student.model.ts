@@ -159,6 +159,11 @@ studentSchema.pre('findOne', function (next) {
   next();
 });
 
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
+
 studentSchema.methods.isUserExist = async function (id: string) {
   const existingUser = await Student.findOne({ id });
   return existingUser;
