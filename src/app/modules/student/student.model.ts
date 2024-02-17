@@ -164,6 +164,14 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
+// virtual
+studentSchema.virtual('fullName').get(function () {
+  return (
+    this.name.firstName + '' + this.name.middleName + '' + this.name.lastName
+  );
+});
+
+// check id for student creation
 studentSchema.methods.isUserExist = async function (id: string) {
   const existingUser = await Student.findOne({ id });
   return existingUser;
