@@ -128,6 +128,10 @@ const studentSchema = new Schema<TStudent, TStudentModel, StudentMethods>({
   profileImage: { type: String },
   isActive: { type: String, enum: ['active', 'disabled'], default: 'active' },
   isDeleted: { type: Boolean, default: false },
+},{
+  toJSON:{
+    virtuals: true
+  }
 });
 
 // pre middle ware
@@ -167,7 +171,7 @@ studentSchema.pre('aggregate', function (next) {
 // virtual
 studentSchema.virtual('fullName').get(function () {
   return (
-    this.name.firstName + '' + this.name.middleName + '' + this.name.lastName
+    this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
   );
 });
 
